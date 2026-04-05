@@ -3,21 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DUGOUT - Baseball Strategy App</title>
+    <title>DUGOUT - 野球戦略アシスタント</title>
+    <meta name="description" content="セイバーメトリクスに基づいた野球戦略アプリ。試合中の采配をデータで支援。">
+    <meta property="og:title" content="DUGOUT - 野球戦略アシスタント">
+    <meta property="og:description" content="得点期待値・勝率をリアルタイム表示。13の攻撃戦術をデータで分析。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://maitoyamada09.github.io/DUGOUT/">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #000; color: #fff; text-align: center; padding: 60px 20px; }
-        .logo { font-size: 48px; font-weight: bold; color: #f5c518; margin-bottom: 16px; }
-        .tagline { font-size: 18px; color: #888; margin-bottom: 40px; }
-        .links a { display: inline-block; color: #f5c518; text-decoration: none; margin: 0 16px; font-size: 14px; border-bottom: 1px solid #333; padding-bottom: 2px; }
-        .links a:hover { border-color: #f5c518; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif; background: #000; color: #fff; }
+
+        /* Hero */
+        .hero { text-align: center; padding: 80px 20px 60px; }
+        .hero-logo { font-size: 56px; font-weight: 800; color: #f5c518; letter-spacing: 4px; }
+        .hero-sub { font-size: 18px; color: #888; margin-top: 12px; }
+        .hero-tagline { font-size: 28px; font-weight: 700; margin-top: 32px; line-height: 1.5; }
+        .hero-tagline span { color: #f5c518; }
+
+        /* CTA */
+        .cta { text-align: center; padding: 20px; }
+        .cta a { display: inline-block; background: #f5c518; color: #000; font-size: 18px; font-weight: 700; padding: 16px 48px; border-radius: 14px; text-decoration: none; transition: transform 0.2s; }
+        .cta a:hover { transform: scale(1.05); }
+        .cta-note { font-size: 13px; color: #666; margin-top: 8px; }
+
+        /* Features */
+        .features { max-width: 900px; margin: 0 auto; padding: 60px 20px; }
+        .features h2 { font-size: 32px; font-weight: 700; text-align: center; margin-bottom: 48px; }
+        .features h2 span { color: #f5c518; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+        .feature-card { background: #111; border-radius: 16px; padding: 28px; border: 1px solid #222; }
+        .feature-icon { font-size: 36px; margin-bottom: 12px; }
+        .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #f5c518; }
+        .feature-card p { font-size: 14px; color: #999; line-height: 1.7; }
+
+        /* Stats */
+        .stats { display: flex; justify-content: center; gap: 48px; padding: 48px 20px; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-num { font-size: 48px; font-weight: 800; color: #f5c518; }
+        .stat-label { font-size: 13px; color: #888; margin-top: 4px; }
+
+        /* How it works */
+        .howto { max-width: 700px; margin: 0 auto; padding: 60px 20px; }
+        .howto h2 { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 40px; }
+        .step { display: flex; gap: 20px; margin-bottom: 32px; align-items: flex-start; }
+        .step-num { background: #f5c518; color: #000; font-size: 18px; font-weight: 800; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .step-text h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+        .step-text p { font-size: 14px; color: #888; }
+
+        /* Target */
+        .target { max-width: 700px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+        .target h2 { font-size: 24px; margin-bottom: 24px; }
+        .target-tags { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .target-tag { background: #1a1a00; border: 1px solid #f5c51844; color: #f5c518; padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+
+        /* Footer */
+        footer { text-align: center; padding: 40px 20px; border-top: 1px solid #222; margin-top: 40px; }
+        footer a { color: #f5c518; text-decoration: none; font-size: 13px; margin: 0 12px; }
+        footer p { color: #666; font-size: 12px; margin-top: 16px; }
+
+        /* Languages */
+        .lang-bar { text-align: center; padding: 12px; background: #0a0a0a; }
+        .lang-bar span { font-size: 14px; color: #666; margin: 0 8px; }
     </style>
 </head>
 <body>
-    <div class="logo">DUGOUT</div>
-    <p class="tagline">Data-driven baseball strategy assistant</p>
-    <div class="links">
-        <a href="privacy-policy.html">Privacy Policy</a>
+    <div class="lang-bar">
+        <span>🇯🇵 日本語</span>
+        <span>🇺🇸 English</span>
+        <span>🇰🇷 한국어</span>
+        <span>🇪🇸 Español</span>
+        <span>🇨🇳 中文</span>
     </div>
+
+    <section class="hero">
+        <div class="hero-logo">DUGOUT</div>
+        <p class="hero-sub">Baseball Strategy Assistant</p>
+        <h1 class="hero-tagline">
+            最適解を、<span>瞬時に。</span><br>
+            あなたの野球の勘に、<span>根拠を。</span>
+        </h1>
+    </section>
+
+    <div class="cta">
+        <a href="#">App Storeでダウンロード</a>
+        <p class="cta-note">無料 ・ iOS 17以降対応</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-num">13</div>
+            <div class="stat-label">攻撃戦術を分析</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">おすすめ度で比較</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">5</div>
+            <div class="stat-label">言語に対応</div>
+        </div>
+    </div>
+
+    <section class="features">
+        <h2>データが、<span>采配を変える。</span></h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>セイバーメトリクス分析</h3>
+                <p>MLBの得点期待値マトリクス、盗塁損益分岐点、カウント別打者有利度など、実データに基づいた戦略分析をリアルタイムで実行。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>13の戦術をおすすめ度で比較</h3>
+                <p>バント・盗塁・エンドラン・スクイズなど13の攻撃戦術を、状況・選手能力・カウントに応じて合計100%で表示。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>ワンタップ操作</h3>
+                <p>スコア・アウト・走者・カウントをすべてワンタップで操作。走者やカウントが変わるたびにおすすめが自動更新。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>自動記録＆分析</h3>
+                <p>全打席・全作戦を自動記録。選手別・作戦別・状況別の成績を自動集計。試合後のミーティング用レポートも自動生成。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👤</div>
+                <h3>選手能力管理</h3>
+                <p>打率・長打率・出塁率・バント成功率・走力・盗塁成功率を設定。試合データの蓄積で能力値は自動更新。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">↩️</div>
+                <h3>アンドゥ機能</h3>
+                <p>操作を間違えても安心。最大30手まで戻せるアンドゥボタンで、試合中のミスタップに対応。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="howto">
+        <h2>使い方はシンプル</h2>
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+                <h3>選手を登録する</h3>
+                <p>背番号・名前・ポジション・能力値を入力。相手チームの情報も登録可能。</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">
+                <h3>打順を設定する</h3>
+                <p>自チーム・相手チームの打順をドロップダウンで設定。試合中に次の打者が自動表示。</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">
+                <h3>プレイボール！</h3>
+                <p>試合中はスコア・走者・カウントをタップ操作。状況に応じた最適な作戦がリアルタイムで表示。</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text">
+                <h3>データが貯まる</h3>
+                <p>試合を重ねるほど分析の精度が向上。ミーティングで使えるレポートも自動生成。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="target">
+        <h2>こんな人におすすめ</h2>
+        <div class="target-tags">
+            <span class="target-tag">少年野球の監督</span>
+            <span class="target-tag">高校野球の指導者</span>
+            <span class="target-tag">チームのマネージャー</span>
+            <span class="target-tag">データ派の選手</span>
+            <span class="target-tag">野球を科学したい人</span>
+        </div>
+    </section>
+
+    <div class="cta" style="padding-bottom: 60px;">
+        <a href="#">App Storeでダウンロード</a>
+        <p class="cta-note">無料 ・ iPhone / iPad対応</p>
+    </div>
+
+    <footer>
+        <a href="privacy-policy.html">プライバシーポリシー</a>
+        <a href="mailto:dugout.app.feedback@gmail.com">お問い合わせ</a>
+        <p>&copy; 2026 DUGOUT. All rights reserved.</p>
+    </footer>
 </body>
 </html>

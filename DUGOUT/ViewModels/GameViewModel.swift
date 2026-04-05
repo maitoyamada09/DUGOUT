@@ -20,6 +20,25 @@ final class GameViewModel {
     /// Last action description (shown on screen)
     var lastActionLog: String? = nil
 
+    // MARK: - Undo History
+    private var stateHistory: [(state: GameState, oppOrderIndex: Int, log: String?)] = []
+    var canUndo: Bool { !stateHistory.isEmpty }
+
+    /// Save current state before making a change
+    func saveSnapshot() {
+        stateHistory.append((state: state, oppOrderIndex: oppOrderIndex, log: lastActionLog))
+        // Keep max 30 steps
+        if stateHistory.count > 30 { stateHistory.removeFirst() }
+    }
+
+    /// Undo last action
+    func undo() {
+        guard let previous = stateHistory.popLast() else { return }
+        state = previous.state
+        oppOrderIndex = previous.oppOrderIndex
+        lastActionLog = "↩ 1つ前に戻しました"
+    }
+
     // MARK: - Our Pitcher Tracking (守備時)
     var currentPitcherId: UUID? = nil
     var currentPitcherName: String = ""
@@ -129,6 +148,7 @@ final class GameViewModel {
 
     /// Execute the inning change
     func performInningChange() {
+        saveSnapshot()
         state.outs = 0
         state.bases = [false, false, false]
         state.resetCount()
@@ -223,12 +243,13 @@ final class GameViewModel {
     }
 
     // MARK: - Score
-    func changeMyScore(_ d: Int)  { state.myScore  = max(0, state.myScore  + d) }
-    func changeOppScore(_ d: Int) { state.oppScore = max(0, state.oppScore + d) }
-    func changeInning(_ d: Int)   { state.inning   = max(1, min(15, state.inning + d)) }
+    func changeMyScore(_ d: Int)  { saveSnapshot(); state.myScore  = max(0, state.myScore  + d) }
+    func changeOppScore(_ d: Int) { saveSnapshot(); state.oppScore = max(0, state.oppScore + d) }
+    func changeInning(_ d: Int)   { saveSnapshot(); state.inning   = max(1, min(15, state.inning + d)) }
 
     // MARK: - Bases / Outs / Count
     func tapBase(_ base: Int) {
+        saveSnapshot()
         state.bases[base - 1].toggle()
         let baseName = ["1塁", "2塁", "3塁"][base - 1]
         if state.bases[base - 1] {
@@ -237,9 +258,9 @@ final class GameViewModel {
             lastActionLog = "\(baseName)ランナー消滅 → 走者: \(runnersText)"
         }
     }
-    func tapOut(at i: Int)    { state.outs = (state.outs == i + 1) ? 0 : i + 1 }
-    func tapBall(at i: Int)   { state.balls   = (state.balls   == i + 1) ? 0 : i + 1 }
-    func tapStrike(at i: Int) { state.strikes = (state.strikes == i + 1) ? 0 : i + 1 }
+    func tapOut(at i: Int)    { saveSnapshot(); state.outs = (state.outs == i + 1) ? 0 : i + 1 }
+    func tapBall(at i: Int)   { saveSnapshot(); state.balls   = (state.balls   == i + 1) ? 0 : i + 1 }
+    func tapStrike(at i: Int) { saveSnapshot(); state.strikes = (state.strikes == i + 1) ? 0 : i + 1 }
     func resetCount()         { state.balls = 0; state.strikes = 0 }
 
     var runnersText: String {
@@ -260,6 +281,7 @@ final class GameViewModel {
         return players.first { $0.id == lu[ni] }
     }
     func advanceBatter() {
+        saveSnapshot()
         if isOurOffense {
             let lu = lineup.compactMap { $0 }
             guard !lu.isEmpty else { return }
@@ -454,9 +476,9 @@ final class GameViewModel {
                 playerKey: \.hitting, showBreakeven: false,
                 topPlayers: topPlayers(players: players, key: \.hitting)
             ),
-            // 11. ランエンドヒット（走者スタート、打者は振っても振らなくてもOK）
+            // 11. ヒットエンドラン（走者スタート、打者は振っても振らなくてもOK）
             StrategyResult(
-                id: "runhit", name: "ランエンドヒット", risk: .mid,
+                id: "runhit", name: "ヒットエンドラン", risk: .mid,
                 enabled: h1 || h2,
                 rate: min(80, 15 + (a(\.stealing)) * 8 + (a(\.speed)) * 5),
                 reDelta: 0.15,

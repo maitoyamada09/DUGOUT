@@ -25,13 +25,6 @@ struct GameView: View {
             .background(Color.black)
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("DUGOUT")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(.yellow)
-                }
-            }
         }
         .sheet(item: $viewModel.showingSheet) { sheet in
             switch sheet {
@@ -45,7 +38,7 @@ struct GameView: View {
                 OpponentView(opponents: opponents)
                     .preferredColorScheme(.dark)
             case .players:
-                PlayersView(players: players, dismissAction: { viewModel.showingSheet = nil })
+                PlayersView(dismissAction: { viewModel.showingSheet = nil })
                     .preferredColorScheme(.dark)
             case .gameSetup:
                 GameSetupView(viewModel: viewModel)

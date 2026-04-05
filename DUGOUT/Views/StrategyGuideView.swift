@@ -330,7 +330,7 @@ struct StrategyGuideView: View {
             )
 
             guideCard(
-                title: "ランエンドヒット",
+                title: "ヒットエンドラン",
                 subtitle: "走者スタート + 打者は振っても振らなくてもOK",
                 risk: "中",
                 riskColor: .orange,

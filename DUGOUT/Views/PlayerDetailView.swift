@@ -106,6 +106,11 @@ struct PlayerDetailView: View {
                 VStack(spacing: 16) {
                     sectionHeader("能力値")
 
+                    Text("試合を記録するたびに実績データから自動更新されます")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Color(white: 0.4))
+                        .padding(.horizontal, 16)
+
                     // 打率
                     abilityPresetSection(label: "打率", icon: "circle.fill", currentGrade: player.hitting, currentRaw: player.rawHitting, presets: [(".300+", ".300", 5), (".250", ".250", 4), (".200", ".200", 3), (".150", ".150", 2), (".100-", ".100", 1)], onSelect: { raw, grade in player.rawHitting = raw; player.hitting = grade })
 

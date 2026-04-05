@@ -2,24 +2,19 @@ import SwiftUI
 import SwiftData
 
 struct PlayersView: View {
-    let players: [Player]
     var dismissAction: (() -> Void)? = nil
     @Environment(\.modelContext) private var modelContext
+    @Query private var players: [Player]
     @Query private var opponents: [Opponent]
     @State private var selectedSection = 0
     @State private var filterPosition: String = "全"
-    @State private var showAddPlayer = false
-    @State private var showAddOpponent = false
+    @State private var newPlayer: Player? = nil
+    @State private var newOpponent: Opponent? = nil
 
     private var filtered: [Player] {
         let sorted = players.sorted { $0.number.localizedStandardCompare($1.number) == .orderedAscending }
         if filterPosition == "全" { return sorted }
         return sorted.filter { $0.position == filterPosition }
-    }
-
-    /// Most recently added player (last in array)
-    private var newestPlayer: Player? {
-        players.sorted { $0.createdAt > $1.createdAt }.first
     }
 
     var body: some View {
@@ -49,34 +44,30 @@ struct PlayersView: View {
                 }
             }
             // Add player sheet
-            .sheet(isPresented: $showAddPlayer) {
-                if let p = newestPlayer {
-                    NavigationStack {
-                        PlayerDetailView(player: p)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("閉じる") { showAddPlayer = false }
-                                        .foregroundStyle(.secondary)
-                                }
+            .sheet(item: $newPlayer) { p in
+                NavigationStack {
+                    PlayerDetailView(player: p)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("閉じる") { newPlayer = nil }
+                                    .foregroundStyle(.secondary)
                             }
-                    }
-                    .preferredColorScheme(.dark)
+                        }
                 }
+                .preferredColorScheme(.dark)
             }
             // Add opponent sheet
-            .sheet(isPresented: $showAddOpponent) {
-                if let opp = opponents.sorted(by: { $0.createdAt > $1.createdAt }).first {
-                    NavigationStack {
-                        OpponentDetailView(opponent: opp)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("閉じる") { showAddOpponent = false }
-                                        .foregroundStyle(.secondary)
-                                }
+            .sheet(item: $newOpponent) { opp in
+                NavigationStack {
+                    OpponentDetailView(opponent: opp)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("閉じる") { newOpponent = nil }
+                                    .foregroundStyle(.secondary)
                             }
-                    }
-                    .preferredColorScheme(.dark)
+                        }
                 }
+                .preferredColorScheme(.dark)
             }
         }
     }
@@ -99,13 +90,15 @@ struct PlayersView: View {
             List {
                 // Big add button
                 Button(action: addPlayer) {
-                    HStack {
+                    HStack(spacing: 10) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 28))
                             .foregroundStyle(.yellow)
                         Text("選手を追加する")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 17, weight: .bold))
                             .foregroundStyle(.yellow)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                         Spacer()
                         Text("\(players.count)人")
                             .font(.system(size: 14))
@@ -114,6 +107,36 @@ struct PlayersView: View {
                     .frame(minHeight: 54)
                 }
                 .listRowBackground(Color.yellow.opacity(0.1))
+
+                // Empty state
+                if filtered.isEmpty {
+                    Section {
+                        VStack(spacing: 16) {
+                            Image(systemName: "person.badge.plus")
+                                .font(.system(size: 48))
+                                .foregroundStyle(Color(white: 0.2))
+
+                            Text("まだ選手が登録されていません")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(Color(white: 0.4))
+
+                            VStack(alignment: .leading, spacing: 8) {
+                                Label("上の「＋選手を追加する」をタップ", systemImage: "1.circle.fill")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(Color(white: 0.35))
+                                Label("背番号・名前・ポジションを入力", systemImage: "2.circle.fill")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(Color(white: 0.35))
+                                Label("能力値を設定して保存", systemImage: "3.circle.fill")
+                                    .font(.system(size: 13))
+                                    .foregroundStyle(Color(white: 0.35))
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                    }
+                    .listRowBackground(Color.clear)
+                }
 
                 ForEach(filtered, id: \.id) { player in
                     NavigationLink(destination: PlayerDetailView(player: player)) {
@@ -131,18 +154,42 @@ struct PlayersView: View {
     private var enemyTeamView: some View {
         List {
             Button(action: addOpponent) {
-                HStack {
+                HStack(spacing: 10) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 28))
                         .foregroundStyle(.red)
                     Text("相手チームを追加する")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(.red)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     Spacer()
                 }
                 .frame(minHeight: 54)
             }
             .listRowBackground(Color.red.opacity(0.08))
+
+            if opponents.isEmpty {
+                Section {
+                    VStack(spacing: 16) {
+                        Image(systemName: "person.2.badge.plus")
+                            .font(.system(size: 48))
+                            .foregroundStyle(Color(white: 0.2))
+
+                        Text("相手チームが未登録です")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Color(white: 0.4))
+
+                        Text("上の「＋相手チームを追加する」から\nチーム名と選手を登録できます")
+                            .font(.system(size: 13))
+                            .foregroundStyle(Color(white: 0.35))
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+                }
+                .listRowBackground(Color.clear)
+            }
 
             ForEach(opponents, id: \.id) { opp in
                 Section {
@@ -199,19 +246,14 @@ struct PlayersView: View {
         let p = Player()
         modelContext.insert(p)
         try? modelContext.save()
-        // Small delay to let SwiftData process, then show sheet
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            showAddPlayer = true
-        }
+        newPlayer = p
     }
 
     private func addOpponent() {
         let opp = Opponent()
         modelContext.insert(opp)
         try? modelContext.save()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            showAddOpponent = true
-        }
+        newOpponent = opp
     }
 
     // MARK: - Helpers

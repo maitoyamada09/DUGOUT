@@ -6,33 +6,29 @@ struct ScoreboardCard: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            // Row 1: Inning + Score
+            // Row 1: Undo + Inning + Score
             HStack(spacing: 0) {
-                // Inning
-                Button { viewModel.changeInning(-1) } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                // Undo button
+                Button {
+                    viewModel.undo()
+                } label: {
+                    Image(systemName: "arrow.uturn.backward.circle.fill")
+                        .font(.system(size: 22))
+                        .foregroundStyle(viewModel.canUndo ? .yellow : Color(white: 0.2))
                 }
+                .disabled(!viewModel.canUndo)
                 .frame(width: 36, height: 44)
+                .padding(.leading, 4)
 
-                Button { viewModel.state.isTop.toggle() } label: {
-                    HStack(spacing: 4) {
-                        Text(viewModel.state.innings)
-                            .font(.system(size: 16, weight: .bold, design: .monospaced))
-                            .foregroundStyle(.yellow)
-                        Image(systemName: viewModel.state.isTop ? "arrow.up" : "arrow.down")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.yellow)
-                    }
+                // Inning display
+                HStack(spacing: 4) {
+                    Text(viewModel.state.innings)
+                        .font(.system(size: 16, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.yellow)
+                    Image(systemName: viewModel.state.isTop ? "arrow.up" : "arrow.down")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.yellow)
                 }
-
-                Button { viewModel.changeInning(1) } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
-                }
-                .frame(width: 36, height: 44)
 
                 Spacer()
 

@@ -18,7 +18,7 @@ struct ContentView: View {
                     .tabItem { Label("試合", systemImage: "diamond.fill") }
                     .tag(0)
 
-                PlayersView(players: players)
+                PlayersView()
                     .tabItem { Label("選手", systemImage: "person.2") }
                     .tag(1)
 
@@ -42,7 +42,7 @@ struct ContentView: View {
             .tint(.yellow)
 
             if !hasSeenOnboarding {
-                OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
+                TutorialView(hasSeenTutorial: $hasSeenOnboarding)
                     .transition(.opacity)
             }
         }

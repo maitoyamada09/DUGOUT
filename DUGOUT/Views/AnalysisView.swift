@@ -114,7 +114,7 @@ struct AnalysisView: View {
         let strategyNames: [String: String] = [
             "power": "バッティング", "bunt": "バント", "steal": "盗塁",
             "hitrun": "エンドラン", "squeeze": "スクイズ", "safe": "セーフティ",
-            "buster": "バスター", "runhit": "ランエンドヒット",
+            "buster": "バスター", "runhit": "ヒットエンドラン",
             "delayed": "ディレード", "firstthird": "一三塁"
         ]
 
